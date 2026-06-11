@@ -1023,7 +1023,7 @@ function taskRow(l,t,extra){
     ${lk?'<span class="urg" style="background:#1d2127;color:var(--faint)">locked</span>':`<span class="urg ${t.urg}" title="urgency">${t.urg}</span>`}${t.assignee?`<span class="asg">👤 ${esc(t.assignee)}</span>`:""}
     ${EVID.has(t.t)&&!lk?'<span class="urg" style="background:#13262e;color:#67e8f9" title="a link must be attached before this can be checked">📎 evidence</span>':""}
     ${lk?"":linkChips(t,l.slug,i)}
-    ${(!lk&&t.t==="Form (intake)"&&!(t.links||[]).length)?`<button class="addlnk" style="background:#13262e;color:#67e8f9;border-color:#1d4250" title="Creates a new Google Sheet in your Google account, named after this product, and saves it as the intake form" onclick="event.stopPropagation();createIntakeSheet('${l.slug}')">📄 Create Google Sheet</button>`:""}
+    ${(!lk&&t.t==="Form (intake)"&&!(t.links||[]).some(k=>/spreadsheets/.test(k.u)))?`<button class="addlnk" style="background:#13262e;color:#67e8f9;border-color:#1d4250" title="Creates a new Google Sheet in your Google account, named after this product, and saves it as the intake form" onclick="event.stopPropagation();createIntakeSheet('${l.slug}')">📄 Create Google Sheet</button>`:""}
     <button class="exp" onclick="toggle('${key}')">${open?"▴ close":"▾ details"}${t.notes.length?` (${t.notes.length}${vids?" · 🎥":""})`:""}</button></span>
    <span class="o" style="color:${DCOLOR(t.d)}">${extra||t.d}</span></div>
    ${open?(lk?`<div class="taskpanel" style="color:var(--dim)">🔒 <b>Locked.</b> ${esc(lockReason(l,t)).replace(/^./,c=>c.toUpperCase())}. ${DOD[t.t]?`<div style="margin-top:6px;color:var(--faint)">Definition of done: ${esc(DOD[t.t])}</div>`:""}</div>`:taskPanel(l,t,i)):""}</div>`;
@@ -1187,7 +1187,7 @@ function viewLaunch(){
   <div class="sub">DRI: <select onchange="setDRI('${l.slug}',this.value)" title="change DRI">${DEPTS().map(d=>`<option value="${d}" ${d===l.dri?"selected":""}>${d}</option>`).join("")}</select>
    · target ${fmt(l.target)} · stage <b>${l.complete?"Complete":l.stage}</b>${l.complete?"":` · float <b style="color:${floatDays(l)<0?"var(--red)":"var(--green)"}">${floatDays(l)}d</b> · velocity ${velocity(l).toFixed(1)}/wk · forecast <b>${fmt(forecastDate(l))}</b>`}</div>
   <div class="stages">${STAGES.map((s,i)=>`<span class="stg ${i<idx||l.complete?"past":i===idx?"cur":""}">${s}</span>`).join("")}</div>
-  <div class="panel"><h3>📍 POSITION ON THE MASTER FLOW CHART <span style="color:var(--faint);font-weight:400">— the live version of the PDF, passed around with this card</span><button class="iconbtn" style="float:right" onclick="S.hideFlow=!S.hideFlow;render()">${S.hideFlow?"▸ show flow chart":"▾ hide flow chart"}</button></h3>
+  <div class="panel"><h3>Flow chart<button class="iconbtn" style="float:right" onclick="S.hideFlow=!S.hideFlow;render()">${S.hideFlow?"▸ show":"▾ hide"}</button></h3>
     ${S.hideFlow?'<div class="sub" style="margin:4px 0">Flow chart hidden.</div>':`${flowSVG(l)}
     <div class="legend"><span><i style="background:#14331f;border:1px solid #4ade80"></i>done</span><span><i style="background:#33260f;border:1px solid #fbbf24"></i>in progress</span><span><i style="background:#331414;border:1px solid #f87171"></i>blocked</span><span><i style="background:#1d2127;border:1px solid #3a414b"></i>to do (current stage)</span><span><i style="background:#15171b;border:1px solid #262b32"></i>upcoming</span><span style="color:var(--purple)">◆ decision gate</span></div>`}</div>
   <div class="twocol"><div>
